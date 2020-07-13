@@ -3,7 +3,7 @@ const app = new express(); //this is the express app which registers our routes
 
 //app.get means we are creating a new route handler
 app.get("/", (req, res) => {
-  res.send({ hi: "there" });
+  res.send({ hola: "there" });
 });
 
 const PORT = process.env.PORT || 5000;

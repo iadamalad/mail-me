@@ -20,19 +20,19 @@ passport.use(
       callbackURL: "/auth/google/callback",
       proxy: true,
     },
-    (accessToken, refreshToken, profile, done) => {
+    async (accessToken, refreshToken, profile, done) => {
       //callback when users comes back from being authorized by google
-      User.findOne({ googleID: profile.id }).then((existingUser) => {
-        if (existingUser) {
-          done(null, existingUser); //the done function communicates back to passport that we are done with no errors(null) and with the user
-        } else {
-          new User({
-            googleID: profile.id,
-          })
-            .save()
-            .then((user) => done(null, user));
-        }
-      });
+      const existingUser = await User.findOne({ googleID: profile.id });
+      if (existingUser) {
+        done(null, existingUser); //the done function communicates back to passport that we are done with no errors(null) and with the user
+        //can do return done(null, existingUser); and take out the else
+      } else {
+        const user = await new User({
+          //anytime we touch our database, it returns a promise so we have to deal with asynchronously
+          googleID: profile.id,
+        }).save();
+        done(null, user);
+      }
     }
   )
 );
